@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 点击时的背景 -->
+    <item android:drawable="@drawable/btn_page_pre_selected" android:state_pressed="true"/>
+    <!-- 默认的背景 -->
+    <item android:drawable="@drawable/btn_page_pre_default" android:state_focused="false"/>
+    <item android:drawable="@drawable/btn_page_pre_default_foc" android:state_focused="true"/>
+
+</selector>

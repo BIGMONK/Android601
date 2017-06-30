@@ -1,0 +1,109 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'android-apt'
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "youtu.android601"
+        minSdkVersion 17
+        targetSdkVersion 20
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    //打包重命名
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.each {
+                output ->
+                    //release版本重命名
+                    if (variant.buildType.name.equals('release')) {
+
+                        def outputFile = output.outputFile
+                        if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                            def fileName ="${variant.versionName}_${releaseTime()}_${variant.versionCode}.apk"
+                            output.outputFile = new File(outputFile.parent, fileName)
+                        }
+                    } else if (variant.buildType.name.equals('debug')) {
+                        output.outputFile = new File(output.outputFile.parent,
+                                "android601" + "-" + variant.versionCode
+                                        + "_v" + variant.versionName
+//                                        + "_v" + variant.versionName.substring(variant.versionName.lastIndexOf(variant.versionCode + ""))
+                                        + ".apk")
+                    }
+            }
+    }
+
+
+    productFlavors {
+        flavor {
+            resValue "string", "app_name", "Android600"
+            resValue "bool", "isrRank", 'false'
+        }
+
+//        android:icon="${icon}"
+//        android:label="${app_name}"
+//        flavor {
+//            applicationId 'youtu.android600'
+//            mainfestPlaceholders=[app_name:"600",icon:"@mipmap/ic_launcher0"]
+//            versionCode 6001
+//            versionName "6001"
+//        }
+//        flavor1 {
+//            applicationId 'youtu.android601'
+//            mainfestPlaceholders=[appname:"601",icon:"@mipmap/ic_launcher1"]
+//            versionCode 6011
+//            versionName "6011"
+//        }
+//        flavor2 {
+//            applicationId 'youtu.android602'
+//            mainfestPlaceholders=[appname:"602",icon:"@mipmap/ic_launcher2"]
+//            versionCode 6021
+//            versionName "6021"
+//        }
+    }
+}
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
+apply plugin: 'org.greenrobot.greendao'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0'
+    }
+}
+
+greendao {
+    schemaVersion 1
+    daoPackage 'com.greendao.gen'
+    targetGenDir 'src/main/java'
+}
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    testCompile 'junit:junit:4.12'
+    compile 'com.github.bumptech.glide:glide:3.8.0'
+    compile 'com.google.code.gson:gson:2.8.1'
+
+    compile 'org.greenrobot:greendao:3.0.1'
+    compile 'org.greenrobot:greendao-generator:3.0.0'
+
+    compile 'com.lwkandroid:StateFrameLayout:1.0.1'
+
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+}
